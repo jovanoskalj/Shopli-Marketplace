@@ -1,39 +1,48 @@
-🛒 Shopli – E-Commerce Demo Application
-Shopli is a demo ASP.NET Core MVC web application built for educational purposes. It implements the Onion Architecture design pattern to promote clean separation of concerns and follows modern software engineering practices such as external API integration, layered services, and cloud deployment.
+# 🛒 Shopli – E-Commerce Demo Application
 
-⚠️ Note: This is not a production-level application. It is built to demonstrate architectural patterns, third-party integrations (like Stripe), and publishing to Azure.
+**Shopli** is a demo ASP.NET Core MVC web application built for educational purposes.  
+It follows the **Onion Architecture** to ensure clean separation of concerns and modern best practices such as external API integration, service abstraction, and cloud deployment.
 
-✅ Features
-🧅 Onion Architecture
-The solution is structured into:
+> ⚠️ **Note**: This is *not* a production-level application. It is built to demonstrate architectural patterns, third-party integration (Stripe), and Azure deployment.
 
-Domain – Core business models and interfaces
+---
 
-Repository – Data access layer (Entity Framework Core)
+## ✅ Features
 
-Service – Business logic layer
+### 🧅 Onion Architecture
+The solution is structured in logical layers:
+- **Domain** – Core business logic and model definitions  
+- **Repository** – Data access using Entity Framework Core  
+- **Service** – Business logic and service abstraction  
+- **Web** – MVC front-end and controller logic  
 
-Web – MVC front-end and controllers
+### 📦 CRUD Operations
+Implements **full CRUD** for **5 different models**, including:
+- Products  
+- Orders  
+- Shopping Cart  
+- Categories  
+- Payments  
 
-📦 5 Domain Models
-Includes full CRUD operations for at least five models (e.g., Product, Order, ShoppingCart, etc.).
+### 🔁 External API Integration
+Uses the [FakeStore API](https://fakestoreapi.com/products) to import and display external product data in a transformed way.
 
-🔁 External API Integration
-Fetches product data from FakeStore API, transforms it, and displays it within the UI.
+### 💳 Stripe Payment Integration
+Real-world integration with **Stripe** payment gateway to support online payments (test mode).
 
-💳 Stripe Payment Integration
-Real-world integration with Stripe for online payments (test mode).
+### ☁️ Azure Deployment
+The app is deployed on Microsoft Azure:
+🔗 [Live Demo](https://eshopweb20250606203405.azurewebsites.net/)
 
-☁️ Deployed to Azure
-The app is published and running live on Azure:
-👉 Live Demo
+---
 
-❌ What is Not Implemented (Yet)
-🚫 User Roles and Authorization
-Role-based access control (e.g., admin vs. user) is not implemented in this version, but the architecture supports easy extension.
+## ❌ What’s Not Included
 
-🔐 Stripe Keys in Production
-For the purpose of demonstration, Stripe keys are managed via environment variables in Azure App Service.
+- 🚫 **Role-based Authorization**  
+  User roles (e.g., Admin/User) are not implemented in this version, but the architecture is ready for extension.
 
-🧪 No Unit or Integration Tests
-This version focuses on structure and deployment; testing is not included.
+- 🧪 **Unit & Integration Tests**  
+  Testing is not included, since the focus was on structure, services, and deployment.
+
+- 🔐 **Production Secrets**  
+  Stripe secret keys are managed via Azure environment variables.
