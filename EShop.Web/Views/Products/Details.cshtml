@@ -1,0 +1,89 @@
+﻿@model EShop.Domain.Domain_Models.Product
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+<style>
+    .card-img-top {
+        height: 300px;
+        object-fit: contain;
+        background-color: #f9f9f9;
+        padding: 10px;
+    }
+
+    .card-title {
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+
+    .card-text {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .action-buttons .btn {
+        flex: 1;
+        min-width: 100px;
+        margin: 0 5px;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+    }
+
+        .action-buttons .btn:hover {
+            transform: translateY(-2px);
+        }
+
+    .card-footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+</style>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4">
+                <img src="@Model.ProductImage" class="card-img-top" alt="Product Image" />
+
+                <div class="card-body text-center">
+                    <h3 class="card-title">@Model.ProductName</h3>
+                    <p class="card-text">@Model.ProductDescription</p>
+                    <h5 class="card-text text-muted">Price: <strong>@Model.ProductPrice</strong> $</h5>
+                    <p class="card-text">Rating: <strong>@Model.Rating</strong> ⭐</p>
+                </div>
+
+                <div class="card-footer action-buttons text-center">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a asp-controller="Products" asp-action="AddProductToCard" asp-route-id="@Model.Id" class="btn btn-info btn-sm">
+                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="/Identity/Account/Login" class="btn btn-info btn-sm">
+                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </a>
+                    }
+
+                    <a asp-controller="Products" asp-action="Edit" asp-route-pid="@Model.Id" class="btn btn-secondary btn-sm">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                    </a>
+                    <a asp-controller="Products" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-sm">
+                        <i class="fa-solid fa-trash"></i> Delete
+                    </a>
+                    <a asp-controller="Products" asp-action="Index" class="btn btn-light btn-sm">
+                        <i class="fa-solid fa-arrow-left"></i> Back
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

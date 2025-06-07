@@ -1,0 +1,37 @@
+﻿@model EShop.Domain.DTO.AddToCartDTO
+
+<div class="container" style="max-width: 500px; margin-top: 50px;">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Add Product To Cart</h4>
+        </div>
+        <div class="card-body">
+            <form method="post" asp-action="AddProductToCard">
+
+                <input type="hidden" asp-for="SelectedProductId" />
+
+                <div class="mb-4">
+                    <label asp-for="SelectedProductName" class="form-label fw-semibold"></label>
+                    <input disabled="disabled" asp-for="SelectedProductName" class="form-control" />
+                    <span asp-validation-for="SelectedProductName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Quantity" class="form-label fw-semibold"></label>
+                    <input asp-for="Quantity" type="number" min="1" class="form-control" />
+                    <span asp-validation-for="Quantity" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-success px-4">
+                        <i class="bi bi-cart-plus me-2"></i> Add To Cart
+                    </button>
+
+                    <a asp-controller="Products" asp-action="Index" class="btn btn-outline-secondary px-4">
+                        <i class="bi bi-arrow-left me-2"></i> Back
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

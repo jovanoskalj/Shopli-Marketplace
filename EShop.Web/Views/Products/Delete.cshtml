@@ -1,0 +1,34 @@
+﻿@model EShop.Domain.Domain_Models.Product
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg p-4">
+                <h3 class="text-danger text-center mb-4">⚠️ Are you sure you want to delete this product?</h3>
+
+                <img src="@Model.ProductImage" class="img-fluid mb-3 rounded border" style="object-fit: contain; max-height: 250px;" alt="Product Image" />
+
+                <ul class="list-group mb-3">
+                    <li class="list-group-item"><strong>Name:</strong> @Model.ProductName</li>
+                    <li class="list-group-item"><strong>Description:</strong> @Model.ProductDescription</li>
+                    <li class="list-group-item"><strong>Price:</strong> @Model.ProductPrice EUR</li>
+                    <li class="list-group-item"><strong>Rating:</strong> @Model.Rating ⭐</li>
+                </ul>
+
+                <form asp-action="Delete">
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-danger w-100 me-2">🗑️ Delete</button>
+                        <a asp-action="Index" class="btn btn-secondary w-100 ms-2">🔙 Back</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

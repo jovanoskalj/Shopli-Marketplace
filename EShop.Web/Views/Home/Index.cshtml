@@ -1,0 +1,69 @@
+﻿@{
+    ViewData["Title"] = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .hero-banner {
+        background-image: url('/NewFolder/banner.jpg');
+        background-size: cover;
+        background-position: center;
+        width: 100%;
+        height: 100vh;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        position: relative;
+        margin: 0;
+        padding: 0;
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 600px;
+        padding: 0 1rem;
+    }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+    .btn-group .btn {
+        margin: 0.5rem;
+        min-width: 150px;
+    }
+</style>
+
+<div class="hero-banner">
+    <div class="overlay"></div>
+
+    <div class="hero-content">
+        <h1 class="fw-bold">Welcome to Shopli</h1>
+        <p>Discover amazing products and shop with ease.</p>
+
+        <div class="btn-group d-flex flex-wrap justify-content-center">
+            <a href="/Identity/Account/Register" class="btn btn-success">Register</a>
+            <a href="/Identity/Account/Login" class="btn btn-primary">Login</a>
+            <a asp-controller="Products" asp-action="Index" class="btn btn-outline-light">Continue as Guest</a>
+        </div>
+    </div>
+</div>
