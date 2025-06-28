@@ -7,6 +7,7 @@ using EShop.Service.Implementation;
 using EShop.Service.Interface;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,6 +74,22 @@ builder.Services.AddSwaggerGen();
 
 // 8. Build App
 var app = builder.Build();
+
+// Ensure database is created and migrated
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    
+    // Ensure the Data directory exists
+    var dataPath = Path.Combine(app.Environment.ContentRootPath, "Data");
+    if (!Directory.Exists(dataPath))
+    {
+        Directory.CreateDirectory(dataPath);
+    }
+    
+    // Apply any pending migrations
+    context.Database.Migrate();
+}
 
 app.UseSwagger();
 app.UseSwaggerUI();
