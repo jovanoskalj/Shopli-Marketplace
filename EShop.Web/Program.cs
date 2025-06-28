@@ -81,28 +81,39 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     
-    // For in-memory database, ensure it's created
-    context.Database.EnsureCreated();
-    
-    // Seed categories if they don't exist
-    if (!context.Categories.Any())
+    try
     {
-        var categories = new[]
-        {
-            new Category { Name = "Electronics", Description = "Electronic devices and gadgets" },
-            new Category { Name = "Clothing", Description = "Fashion and apparel" },
-            new Category { Name = "Books", Description = "Books and literature" },
-            new Category { Name = "Home & Garden", Description = "Home improvement and gardening" },
-            new Category { Name = "Sports", Description = "Sports and fitness equipment" },
-            new Category { Name = "Beauty", Description = "Beauty and personal care" },
-            new Category { Name = "Toys", Description = "Toys and games" },
-            new Category { Name = "Automotive", Description = "Car parts and accessories" }
-        };
-
-        context.Categories.AddRange(categories);
-        context.SaveChanges();
+        // Apply migrations to create database schema
+        context.Database.Migrate();
         
-        Console.WriteLine("Sample categories seeded successfully!");
+        // Seed categories if they don't exist
+        if (!context.Categories.Any())
+        {
+            var categories = new[]
+            {
+                new Category { Name = "Electronics", Description = "Electronic devices and gadgets" },
+                new Category { Name = "Clothing", Description = "Fashion and apparel" },
+                new Category { Name = "Books", Description = "Books and literature" },
+                new Category { Name = "Home & Garden", Description = "Home improvement and gardening" },
+                new Category { Name = "Sports", Description = "Sports and fitness equipment" },
+                new Category { Name = "Beauty", Description = "Beauty and personal care" },
+                new Category { Name = "Toys", Description = "Toys and games" },
+                new Category { Name = "Automotive", Description = "Car parts and accessories" }
+            };
+
+            context.Categories.AddRange(categories);
+            context.SaveChanges();
+            
+            Console.WriteLine("Sample categories seeded successfully!");
+        }
+        
+        Console.WriteLine("Database initialized successfully!");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Database initialization error: {ex.Message}");
+        Console.WriteLine($"Stack trace: {ex.StackTrace}");
+        throw;
     }
 }
 
