@@ -17,10 +17,12 @@ namespace EShop.Web.Controllers
     public class ProductsController : Controller
     {
         private readonly IProductService _productService;
+        private readonly ICategoryService _categoryService;
 
-        public ProductsController(IProductService productService)
+        public ProductsController(IProductService productService, ICategoryService categoryService)
         {
             _productService = productService;
+            _categoryService = categoryService;
         }
 
         // GET: Products
@@ -138,6 +140,25 @@ namespace EShop.Web.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             _productService.AddProductToSoppingCart(model.SelectedProductId, Guid.Parse(userId), model.Quantity);
             return RedirectToAction(nameof(Index));
+        }
+
+        // Diagnostic action to check product categories
+        [HttpGet]
+        public IActionResult CheckCategories()
+        {
+            var products = _productService.GetAll();
+            var result = products.Select(p => new { 
+                Name = p.ProductName, 
+                CategoryId = p.CategoryId,
+                HasCategory = p.CategoryId != null
+            }).ToList();
+            
+            return Json(new { 
+                TotalProducts = result.Count,
+                ProductsWithCategories = result.Count(r => r.HasCategory),
+                ProductsWithoutCategories = result.Count(r => !r.HasCategory),
+                Products = result
+            });
         }
     }
 }

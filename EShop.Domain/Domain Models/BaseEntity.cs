@@ -11,5 +11,17 @@ namespace EShop.Domain.Domain_Models
     {
         [Key]
         public Guid Id { get; set; }
+
+        [Display(Name = "Created On")]
+        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
+
+        [Display(Name = "Modified On")]
+        public DateTime? ModifiedOn { get; set; }
+
+        [Display(Name = "Created By")]
+        public string? CreatedBy { get; set; }
+
+        [Display(Name = "Modified By")]
+        public string? ModifiedBy { get; set; }
     }
 }

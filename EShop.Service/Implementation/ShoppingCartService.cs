@@ -48,21 +48,47 @@ namespace EShop.Service.Implementation
 
         public ShoppingCart? GetByUserId(Guid userId)
         {
-            return _shoppingCartRepository.Get(selector: x => x,
-                                                       predicate: x => x.OwnerId.Equals(userId.ToString()));
+            var userCart = _shoppingCartRepository.Get(selector: x => x,
+                                                       predicate: x => x.OwnerId != null && x.OwnerId.Equals(userId.ToString()));
+
+            // If no cart exists for the user, create one
+            if (userCart == null)
+            {
+                userCart = new ShoppingCart
+                {
+                    Id = Guid.NewGuid(),
+                    OwnerId = userId.ToString(),
+                    AllProducts = new List<ProductInShoppingCart>()
+                };
+                _shoppingCartRepository.Insert(userCart);
+            }
+
+            return userCart;
         }
 
         public ShoppingCartDTO GetByUserIdWithIncludedPrducts(Guid userId)
         {
-            var userCart =  _shoppingCartRepository.Get(selector: x => x,
-                                               predicate: x => x.OwnerId.Equals(userId.ToString()),
-                                               include: x=> x.Include(z=> z.AllProducts).ThenInclude(m => m.Product));
+            var userCart = _shoppingCartRepository.Get(selector: x => x,
+                                               predicate: x => x.OwnerId != null && x.OwnerId.Equals(userId.ToString()),
+                                               include: x => x.Include(z => z.AllProducts).ThenInclude(m => m.Product));
 
-            var allProducts = userCart.AllProducts.ToList();
+            // If no cart exists for the user, create one
+            if (userCart == null)
+            {
+                userCart = new ShoppingCart
+                {
+                    Id = Guid.NewGuid(),
+                    OwnerId = userId.ToString(),
+                    AllProducts = new List<ProductInShoppingCart>()
+                };
+                _shoppingCartRepository.Insert(userCart);
+            }
+
+            var allProducts = userCart.AllProducts?.ToList() ?? new List<ProductInShoppingCart>();
 
             var allProductPrices = allProducts.Select(z => new
             {
-                ProductPrice = z.Product.ProductPrice,
+                ProductPrice = z.Product?.ProductPrice ?? 0,
                 Quantity = z.Quantity
             }).ToList();
 
@@ -86,9 +112,14 @@ namespace EShop.Service.Implementation
         {
 
             var userCart = _shoppingCartRepository.Get(selector: x => x,
-                                              predicate: x => x.OwnerId.Equals(userId.ToString()),
+                                              predicate: x => x.OwnerId != null && x.OwnerId.Equals(userId.ToString()),
                                               include: x => x.Include(z => z.AllProducts).ThenInclude(m => m.Product));
 
+            // Check if user has a cart and products in it
+            if (userCart == null || userCart.AllProducts == null || !userCart.AllProducts.Any())
+            {
+                return false; // No cart or no products to order
+            }
 
             var loggedInUser = _userRepository.GetUserById(userId.ToString());
 
@@ -125,8 +156,11 @@ namespace EShop.Service.Implementation
             for (int i = 1; i <= productInOrder.Count(); i++)
             {
                 var currentItem = productInOrder[i - 1];
-                totalPrice += currentItem.Quantity * currentItem.OrderedProduct.ProductPrice;
-                sb.AppendLine(i.ToString() + ". " + currentItem.OrderedProduct.ProductName + " with quantity of: " + currentItem.Quantity + " and price of: $" + currentItem.OrderedProduct.ProductPrice);
+                if (currentItem.OrderedProduct != null)
+                {
+                    totalPrice += currentItem.Quantity * currentItem.OrderedProduct.ProductPrice;
+                    sb.AppendLine(i.ToString() + ". " + currentItem.OrderedProduct.ProductName + " with quantity of: " + currentItem.Quantity + " and price of: $" + currentItem.OrderedProduct.ProductPrice);
+                }
             }
 
             sb.AppendLine("Total price for your order: " + totalPrice.ToString());

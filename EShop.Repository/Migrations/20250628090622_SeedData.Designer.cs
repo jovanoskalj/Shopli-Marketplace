@@ -3,6 +3,7 @@ using System;
 using EShop.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EShop.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250628090622_SeedData")]
+    partial class SeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
@@ -53,7 +56,7 @@ namespace EShop.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
 
                     b.HasData(
                         new
@@ -133,7 +136,7 @@ namespace EShop.Repository.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("EShop.Domain.Domain_Models.Product", b =>
@@ -214,7 +217,7 @@ namespace EShop.Repository.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("EShop.Domain.Domain_Models.ProductImage", b =>
@@ -255,7 +258,7 @@ namespace EShop.Repository.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages", (string)null);
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("EShop.Domain.Domain_Models.ProductInOrder", b =>
@@ -291,7 +294,7 @@ namespace EShop.Repository.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductInOrders", (string)null);
+                    b.ToTable("ProductInOrders");
                 });
 
             modelBuilder.Entity("EShop.Domain.Domain_Models.ProductInShoppingCart", b =>
@@ -327,7 +330,7 @@ namespace EShop.Repository.Migrations
 
                     b.HasIndex("ShoppingCartId");
 
-                    b.ToTable("ProductInShoppingCarts", (string)null);
+                    b.ToTable("ProductInShoppingCarts");
                 });
 
             modelBuilder.Entity("EShop.Domain.Domain_Models.Review", b =>
@@ -381,7 +384,7 @@ namespace EShop.Repository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("EShop.Domain.Domain_Models.ShoppingCart", b =>
@@ -410,7 +413,7 @@ namespace EShop.Repository.Migrations
                     b.HasIndex("OwnerId")
                         .IsUnique();
 
-                    b.ToTable("ShoppingCarts", (string)null);
+                    b.ToTable("ShoppingCarts");
                 });
 
             modelBuilder.Entity("EShop.Domain.Domain_Models.Wishlist", b =>
@@ -448,7 +451,7 @@ namespace EShop.Repository.Migrations
                     b.HasIndex("UserId", "ProductId")
                         .IsUnique();
 
-                    b.ToTable("Wishlists", (string)null);
+                    b.ToTable("Wishlists");
                 });
 
             modelBuilder.Entity("EShop.Domain.Identity_Models.EShopApplicationUser", b =>

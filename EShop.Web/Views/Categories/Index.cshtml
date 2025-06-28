@@ -1,0 +1,42 @@
+@model List<EShop.Domain.Domain_Models.Category>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">Product Categories</h2>
+            
+            @if (Model.Any())
+            {
+                <div class="row">
+                    @foreach (var category in Model)
+                    {
+                        <div class="col-md-4 col-sm-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">@category.Name</h5>
+                                    <p class="card-text">@category.Description</p>
+                                </div>
+                                <div class="card-footer">
+                                    <a href="@Url.Action("Products", "Categories", new { id = category.Id })" class="btn btn-primary">
+                                        View Products
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <h4>No Categories Available</h4>
+                    <p>There are currently no product categories to display.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

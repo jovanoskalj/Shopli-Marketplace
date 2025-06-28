@@ -60,16 +60,26 @@
                 </div>
 
                 <div class="card-footer action-buttons text-center">
-                    @if (User.Identity.IsAuthenticated)
+                    @if (User.Identity?.IsAuthenticated == true)
                     {
                         <a asp-controller="Products" asp-action="AddProductToCard" asp-route-id="@Model.Id" class="btn btn-info btn-sm">
                             <i class="fa-solid fa-cart-plus"></i> Add to Cart
                         </a>
+                        <form method="post" action="@Url.Action("Add", "Wishlist")" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="productId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="fa-solid fa-heart"></i> Add to Wishlist
+                            </button>
+                        </form>
                     }
                     else
                     {
                         <a href="/Identity/Account/Login" class="btn btn-info btn-sm">
                             <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </a>
+                        <a href="/Identity/Account/Login" class="btn btn-outline-danger btn-sm">
+                            <i class="fa-solid fa-heart"></i> Add to Wishlist
                         </a>
                     }
 
@@ -87,3 +97,86 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Handle wishlist form submission
+    document.addEventListener('DOMContentLoaded', function() {
+        const wishlistForm = document.querySelector('form[action*="Wishlist"]');
+        if (wishlistForm) {
+            wishlistForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const button = this.querySelector('button[type="submit"]');
+                const originalText = button.innerHTML;
+                
+                // Show loading state
+                button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Adding...';
+                button.disabled = true;
+                
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('[name="__RequestVerificationToken"]')?.value || ''
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        button.innerHTML = '<i class="fa-solid fa-check"></i> Added!';
+                        button.classList.remove('btn-outline-danger');
+                        button.classList.add('btn-success');
+                        
+                        // Show success message
+                        showToast(data.message || 'Item added to wishlist!', 'success');
+                        
+                        // Reset button after 2 seconds
+                        setTimeout(() => {
+                            button.innerHTML = originalText;
+                            button.classList.remove('btn-success');
+                            button.classList.add('btn-outline-danger');
+                            button.disabled = false;
+                        }, 2000);
+                    } else {
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                        showToast(data.message || 'Error adding item to wishlist', 'error');
+                    }
+                })
+                .catch(error => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                    showToast('Error adding item to wishlist', 'error');
+                    console.error('Error:', error);
+                });
+            });
+        }
+    });
+    
+    // Simple toast notification function
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+        toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        toast.innerHTML = `
+            <div class="d-flex align-items-center">
+                <i class="fa-solid fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close ms-auto" aria-label="Close"></button>
+            </div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+        
+        // Allow manual close
+        toast.querySelector('.btn-close').addEventListener('click', () => {
+            toast.remove();
+        });
+    }
+</script>

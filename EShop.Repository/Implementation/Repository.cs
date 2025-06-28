@@ -104,5 +104,42 @@ namespace EShop.Repository.Implementation
             return query.Select(selector).AsEnumerable();
         }
 
+        public async Task<T> InsertAsync(T entity)
+        {
+            entity.CreatedOn = DateTime.UtcNow;
+            await _context.AddAsync(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async Task<T> UpdateAsync(T entity)
+        {
+            entity.ModifiedOn = DateTime.UtcNow;
+            _context.Update(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async Task<T> DeleteAsync(T entity)
+        {
+            _context.Remove(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public T? GetById(Guid id)
+        {
+            return entites.FirstOrDefault(e => e.Id == id);
+        }
+
+        public async Task<T?> GetByIdAsync(Guid id)
+        {
+            return await entites.FirstOrDefaultAsync(e => e.Id == id);
+        }
+
+        public IQueryable<T> GetAll()
+        {
+            return entites.AsQueryable();
+        }
     }
 }

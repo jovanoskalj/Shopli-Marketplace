@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlite(connectionString));
 
 // 2. Identity
 builder.Services.AddDefaultIdentity<EShopApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -28,6 +28,12 @@ builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddScoped<IProductImportService, ProductImportService>();
 builder.Services.AddHttpClient<IProductService, ProductService>();
+
+// New enhanced services
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IWishlistService, WishlistService>();
+builder.Services.AddScoped<ISearchService, SearchService>();
 
 // 4. Stripe Configuration
 builder.Services.Configure<StripeSettings>(options =>

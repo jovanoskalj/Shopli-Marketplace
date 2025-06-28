@@ -3,6 +3,7 @@ using System;
 using EShop.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EShop.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250628085405_EnhancedEShopFeatures")]
+    partial class EnhancedEShopFeatures
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
@@ -53,13 +56,13 @@ namespace EShop.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("02361439-7da1-4785-9dae-8c0b2e16eb87"),
-                            CreatedOn = new DateTime(2025, 6, 28, 9, 6, 22, 380, DateTimeKind.Utc).AddTicks(5590),
+                            Id = new Guid("0192ebf8-3cfa-4e39-8533-0f9c520458fa"),
+                            CreatedOn = new DateTime(2025, 6, 28, 8, 54, 4, 858, DateTimeKind.Utc).AddTicks(9560),
                             Description = "Electronic devices and gadgets",
                             DisplayOrder = 1,
                             IconCssClass = "fas fa-laptop",
@@ -68,8 +71,8 @@ namespace EShop.Repository.Migrations
                         },
                         new
                         {
-                            Id = new Guid("02cc8088-8c16-425e-a2f6-5c6ef4a37474"),
-                            CreatedOn = new DateTime(2025, 6, 28, 9, 6, 22, 380, DateTimeKind.Utc).AddTicks(5620),
+                            Id = new Guid("63c9b63d-d4d0-4713-86fb-3e7a26424a27"),
+                            CreatedOn = new DateTime(2025, 6, 28, 8, 54, 4, 858, DateTimeKind.Utc).AddTicks(9580),
                             Description = "Fashion and apparel",
                             DisplayOrder = 2,
                             IconCssClass = "fas fa-tshirt",
@@ -78,8 +81,8 @@ namespace EShop.Repository.Migrations
                         },
                         new
                         {
-                            Id = new Guid("a098e585-c66a-4155-bf9c-a25eaf5a2700"),
-                            CreatedOn = new DateTime(2025, 6, 28, 9, 6, 22, 380, DateTimeKind.Utc).AddTicks(5620),
+                            Id = new Guid("4a453f15-aca5-497a-9bd1-b6cbc3def31a"),
+                            CreatedOn = new DateTime(2025, 6, 28, 8, 54, 4, 858, DateTimeKind.Utc).AddTicks(9580),
                             Description = "Books and literature",
                             DisplayOrder = 3,
                             IconCssClass = "fas fa-book",
@@ -88,8 +91,8 @@ namespace EShop.Repository.Migrations
                         },
                         new
                         {
-                            Id = new Guid("f620b5e0-0e9b-499c-ab11-50f364f41715"),
-                            CreatedOn = new DateTime(2025, 6, 28, 9, 6, 22, 380, DateTimeKind.Utc).AddTicks(5620),
+                            Id = new Guid("29b167c1-63ee-402f-963c-ed40afafbf09"),
+                            CreatedOn = new DateTime(2025, 6, 28, 8, 54, 4, 858, DateTimeKind.Utc).AddTicks(9580),
                             Description = "Home improvement and gardening",
                             DisplayOrder = 4,
                             IconCssClass = "fas fa-home",
@@ -98,8 +101,8 @@ namespace EShop.Repository.Migrations
                         },
                         new
                         {
-                            Id = new Guid("fda09838-abb2-4647-b44a-f1afc0f6ba67"),
-                            CreatedOn = new DateTime(2025, 6, 28, 9, 6, 22, 380, DateTimeKind.Utc).AddTicks(5630),
+                            Id = new Guid("6fe79590-3799-46b7-a7c5-a25fefd895a0"),
+                            CreatedOn = new DateTime(2025, 6, 28, 8, 54, 4, 858, DateTimeKind.Utc).AddTicks(9590),
                             Description = "Sports and outdoor activities",
                             DisplayOrder = 5,
                             IconCssClass = "fas fa-football-ball",
@@ -133,7 +136,7 @@ namespace EShop.Repository.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("EShop.Domain.Domain_Models.Product", b =>
@@ -214,7 +217,7 @@ namespace EShop.Repository.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("EShop.Domain.Domain_Models.ProductImage", b =>
@@ -255,7 +258,7 @@ namespace EShop.Repository.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages", (string)null);
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("EShop.Domain.Domain_Models.ProductInOrder", b =>
@@ -291,7 +294,7 @@ namespace EShop.Repository.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductInOrders", (string)null);
+                    b.ToTable("ProductInOrders");
                 });
 
             modelBuilder.Entity("EShop.Domain.Domain_Models.ProductInShoppingCart", b =>
@@ -327,7 +330,7 @@ namespace EShop.Repository.Migrations
 
                     b.HasIndex("ShoppingCartId");
 
-                    b.ToTable("ProductInShoppingCarts", (string)null);
+                    b.ToTable("ProductInShoppingCarts");
                 });
 
             modelBuilder.Entity("EShop.Domain.Domain_Models.Review", b =>
@@ -381,7 +384,7 @@ namespace EShop.Repository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("EShop.Domain.Domain_Models.ShoppingCart", b =>
@@ -410,7 +413,7 @@ namespace EShop.Repository.Migrations
                     b.HasIndex("OwnerId")
                         .IsUnique();
 
-                    b.ToTable("ShoppingCarts", (string)null);
+                    b.ToTable("ShoppingCarts");
                 });
 
             modelBuilder.Entity("EShop.Domain.Domain_Models.Wishlist", b =>
@@ -448,7 +451,7 @@ namespace EShop.Repository.Migrations
                     b.HasIndex("UserId", "ProductId")
                         .IsUnique();
 
-                    b.ToTable("Wishlists", (string)null);
+                    b.ToTable("Wishlists");
                 });
 
             modelBuilder.Entity("EShop.Domain.Identity_Models.EShopApplicationUser", b =>

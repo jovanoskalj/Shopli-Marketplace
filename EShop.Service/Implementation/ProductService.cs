@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Json;
 using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
 
 namespace EShop.Service.Implementation
 {
@@ -18,13 +19,15 @@ namespace EShop.Service.Implementation
     {
         private readonly IRepository<Product> _productRepository;
         private readonly IRepository<ProductInShoppingCart> _productInShoppingCartRepository;
+        private readonly IRepository<Category> _categoryRepository;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly HttpClient _httpClient;
 
-        public ProductService(IRepository<Product> productRepository, IRepository<ProductInShoppingCart> productInShoppingCartRepository, IShoppingCartService shoppingCartService, HttpClient httpClient)
+        public ProductService(IRepository<Product> productRepository, IRepository<ProductInShoppingCart> productInShoppingCartRepository, IRepository<Category> categoryRepository, IShoppingCartService shoppingCartService, HttpClient httpClient)
         {
             _productRepository = productRepository;
             _productInShoppingCartRepository = productInShoppingCartRepository;
+            _categoryRepository = categoryRepository;
             _shoppingCartService= shoppingCartService;
             _httpClient = httpClient;
         }
@@ -119,6 +122,11 @@ namespace EShop.Service.Implementation
         {
             var selectedProduct = GetById(id);
 
+            if (selectedProduct == null)
+            {
+                throw new Exception("Product not found");
+            }
+
             var addProductToCartModel = new AddToCartDTO
             {
                 SelectedProductId = selectedProduct.Id,
@@ -143,6 +151,11 @@ namespace EShop.Service.Implementation
 
                 var fakeProducts = JsonConvert.DeserializeObject<List<FakeProductDto>>(json);
 
+                if (fakeProducts == null)
+                {
+                    return new List<Product>();
+                }
+
                 var products = fakeProducts.Select(fp => new Product
                 {
                     Id = Guid.NewGuid(),
@@ -162,6 +175,155 @@ namespace EShop.Service.Implementation
             }
         }
 
+        public async Task<List<Product>> GetAllAsync()
+        {
+            return await _productRepository.GetAll()
+                .Where(p => p.IsActive)
+                .Include(p => p.Category)
+                .Include(p => p.Reviews)
+                .Include(p => p.ProductImages)
+                .OrderBy(p => p.ProductName)
+                .ToListAsync();
+        }
 
+        public async Task<Product?> GetByIdAsync(Guid id)
+        {
+            return await _productRepository.GetAll()
+                .Include(p => p.Category)
+                .Include(p => p.Reviews)
+                .Include(p => p.ProductImages)
+                .FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task<Product> InsertAsync(Product product)
+        {
+            return await _productRepository.InsertAsync(product);
+        }
+
+        public async Task<Product> UpdateAsync(Product product)
+        {
+            return await _productRepository.UpdateAsync(product);
+        }
+
+        public async Task DeleteByIdAsync(Guid id)
+        {
+            var product = await GetByIdAsync(id);
+            if (product == null)
+            {
+                throw new Exception("Product not found");
+            }
+            await _productRepository.DeleteAsync(product);
+        }
+
+        public async Task<List<Product>> GetProductsWithDetailsAsync()
+        {
+            return await _productRepository.GetAll()
+                .Where(p => p.IsActive)
+                .Include(p => p.Category)
+                .Include(p => p.Reviews)
+                .Include(p => p.ProductImages)
+                .OrderBy(p => p.ProductName)
+                .ToListAsync();
+        }
+
+        public async Task<Product?> GetProductWithDetailsAsync(Guid id)
+        {
+            return await _productRepository.GetAll()
+                .Where(p => p.IsActive)
+                .Include(p => p.Category)
+                .Include(p => p.Reviews)
+                .Include(p => p.ProductImages)
+                .FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task<bool> IsProductInStockAsync(Guid id, int quantity = 1)
+        {
+            var product = await _productRepository.GetByIdAsync(id);
+            return product != null && product.StockQuantity >= quantity;
+        }
+
+        public async Task UpdateStockAsync(Guid id, int quantity)
+        {
+            var product = await _productRepository.GetByIdAsync(id);
+            if (product != null)
+            {
+                product.StockQuantity += quantity; // Can be negative for sales
+                await _productRepository.UpdateAsync(product);
+            }
+        }
+
+    public async Task AssignCategoriesToProductsAsync()
+    {
+        // Get all products without categories
+        var products = _productRepository.GetAll<Product>(
+            selector: p => p,
+            predicate: p => p.CategoryId == null
+        ).ToList();
+        
+        // Get all categories
+        var electronics = _categoryRepository.Get<Category>(
+            selector: c => c,
+            predicate: c => c.Name == "Electronics"
+        );
+        var books = _categoryRepository.Get<Category>(
+            selector: c => c,
+            predicate: c => c.Name == "Books"
+        );
+        var clothing = _categoryRepository.Get<Category>(
+            selector: c => c,
+            predicate: c => c.Name == "Clothing"
+        );
+        var sports = _categoryRepository.Get<Category>(
+            selector: c => c,
+            predicate: c => c.Name == "Sports"
+        );
+        var homeGarden = _categoryRepository.Get<Category>(
+            selector: c => c,
+            predicate: c => c.Name == "Home & Garden"
+        );
+
+        foreach (var product in products)
+        {
+            var productName = product.ProductName?.ToLower() ?? "";
+            var productDesc = product.ProductDescription?.ToLower() ?? "";
+
+            // Assign based on product name and description
+            if (productName.Contains("laptop") || productName.Contains("computer") || 
+                productName.Contains("phone") || productName.Contains("tablet") ||
+                productName.Contains("gaming") || productName.Contains("tech") ||
+                productDesc.Contains("electronic") || productDesc.Contains("digital"))
+            {
+                product.CategoryId = electronics?.Id;
+            }
+            else if (productName.Contains("book") || productName.Contains("novel") ||
+                     productName.Contains("guide") || productDesc.Contains("read"))
+            {
+                product.CategoryId = books?.Id;
+            }
+            else if (productName.Contains("shirt") || productName.Contains("dress") ||
+                     productName.Contains("pants") || productName.Contains("shoes") ||
+                     productDesc.Contains("clothing") || productDesc.Contains("fashion"))
+            {
+                product.CategoryId = clothing?.Id;
+            }
+            else if (productName.Contains("sport") || productName.Contains("ball") ||
+                     productName.Contains("fitness") || productDesc.Contains("exercise"))
+            {
+                product.CategoryId = sports?.Id;
+            }
+            else if (productName.Contains("home") || productName.Contains("garden") ||
+                     productName.Contains("kitchen") || productDesc.Contains("house"))
+            {
+                product.CategoryId = homeGarden?.Id;
+            }
+            else
+            {
+                // Default to electronics
+                product.CategoryId = electronics?.Id;
+            }
+
+            await _productRepository.UpdateAsync(product);
+        }
+    }
     }
 }

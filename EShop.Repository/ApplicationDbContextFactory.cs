@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.IO;
 
 namespace EShop.Repository
 {
@@ -9,10 +10,20 @@ namespace EShop.Repository
     {
         public ApplicationDbContext CreateDbContext(string[] args)
         {
-            var configuration = new ConfigurationBuilder().SetBasePath(AppDomain.CurrentDomain.BaseDirectory).AddJsonFile("appsettings.json").Build();
+            // Look for appsettings.json in the web project directory
+            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "EShop.Web");
+            if (!Directory.Exists(basePath))
+            {
+                basePath = Directory.GetCurrentDirectory(); // fallback to current directory
+            }
+            
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(basePath)
+                .AddJsonFile("appsettings.json", optional: false)
+                .Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            optionsBuilder.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
 
             return new ApplicationDbContext(optionsBuilder.Options);
         }

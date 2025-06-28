@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - EShop.Web</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/EShop.Web.styles.css" asp-append-version="true" />
 </head>
@@ -29,8 +30,16 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">All Products</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Categories" asp-action="Index">Categories</a>
+                        </li>
                         @if (SignInManager.IsSignedIn(User))
                         {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Wishlist" asp-action="Index">
+                                    <i class="bi bi-heart me-1"></i>Wishlist
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark fw-semibold d-flex align-items-center" asp-controller="ShoppingCarts" asp-action="Index">
                                     <i class="bi bi-cart3 me-1"></i>Cart
@@ -44,11 +53,20 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    @if (ViewData["UseFullWidth"] is bool useFullWidth && useFullWidth)
+    {
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
-    </div>
+    }
+    else
+    {
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    }
 
     <footer class="border-top footer text-muted">
         <div class="container">
