@@ -8,7 +8,3 @@ services:
         value: Production
       - key: ASPNETCORE_URLS
         value: http://+:80
-    disk:
-      name: sqlite-data
-      mountPath: /app/Data
-      sizeGB: 1

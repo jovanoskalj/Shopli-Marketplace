@@ -1,4 +1,5 @@
 using EShop.Domain;
+using EShop.Domain.Domain_Models;
 using EShop.Domain.Identity_Models;
 using EShop.Repository;
 using EShop.Repository.Implementation;
@@ -75,20 +76,34 @@ builder.Services.AddSwaggerGen();
 // 8. Build App
 var app = builder.Build();
 
-// Ensure database is created and migrated
+// Ensure database is created and seeded
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     
-    // Ensure the Data directory exists
-    var dataPath = Path.Combine(app.Environment.ContentRootPath, "Data");
-    if (!Directory.Exists(dataPath))
-    {
-        Directory.CreateDirectory(dataPath);
-    }
+    // For in-memory database, ensure it's created
+    context.Database.EnsureCreated();
     
-    // Apply any pending migrations
-    context.Database.Migrate();
+    // Seed categories if they don't exist
+    if (!context.Categories.Any())
+    {
+        var categories = new[]
+        {
+            new Category { Name = "Electronics", Description = "Electronic devices and gadgets" },
+            new Category { Name = "Clothing", Description = "Fashion and apparel" },
+            new Category { Name = "Books", Description = "Books and literature" },
+            new Category { Name = "Home & Garden", Description = "Home improvement and gardening" },
+            new Category { Name = "Sports", Description = "Sports and fitness equipment" },
+            new Category { Name = "Beauty", Description = "Beauty and personal care" },
+            new Category { Name = "Toys", Description = "Toys and games" },
+            new Category { Name = "Automotive", Description = "Car parts and accessories" }
+        };
+
+        context.Categories.AddRange(categories);
+        context.SaveChanges();
+        
+        Console.WriteLine("Sample categories seeded successfully!");
+    }
 }
 
 app.UseSwagger();

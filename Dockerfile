@@ -36,9 +36,6 @@ COPY --from=publish /app/publish .
 COPY startup.sh /app/startup.sh
 RUN chmod +x /app/startup.sh
 
-# Create directory for SQLite database
-RUN mkdir -p /app/Data
-
 # Set environment variables
 ENV ASPNETCORE_ENVIRONMENT=Production
 ENV ASPNETCORE_URLS=http://+:80
